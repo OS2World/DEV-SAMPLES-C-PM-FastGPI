@@ -1,0 +1,69 @@
+Method for Getting Fast Graphics through the OS/2 GPI
+-----------------------------------------------------
+
+  People are often surprised and dismayed to find that the GPI can be
+very slow if it is used naively. One of the biggest mistakes is to try to
+write a large number of pixels using GpiSetPel(). To reassure people that
+fast screen writes CAN be achieved with the GPI and without needing to
+go to the MMPM direct-screen support (DIVE), I have provided this little
+example. As a bonus, it also shows how to use bitmaps, how to write a
+multi-threaded application, how to use semaphores, and how to set up a
+gray-scale palette. Also, you can learn about classical wave behavior
+and its difference equation representation!
+
+  The basic technique for fast screen writes is to make a bitmap that
+corresponds to the screen. Then, using GpiSetBitmapBits(), this bitmap
+is updated and then blitted to the screen. This requires only two GPI
+calls to write an arbitrary number of pixels, instead of doing a call to
+set the color and a call to write the pixel for EACH pixel.
+
+  Here are miscellaneous notes.
+
+1)  The example implements a simulation of two interfering circular wave
+    sources in two dimensions. The output is displayed with a 32-level
+    grayscale.
+
+2)  A 256-color display at 1024x768 is assumed. The 256 colors are required
+    to get the gray-scale palette. That could be dispensable for other
+    applications. I have not tried this at other resolutions, but things
+    should work OK (or could be easily adjusted for).
+
+3)  Built with GCC/2 2.5.4.
+
+4)  The screens are written very fast [DisplayPlane()] but there is delay
+    between the screen writes due to the many thousands of floating-point
+    calculations needed to simulate the wave behavior. Most applications
+    will not be so compute-bound.
+
+5)  There may be a more direct method for getting the RGB mappings than
+    that used in PrepareGraphics(). Any ideas?
+
+6)  This trick is suitable for applications where you want to write a lot
+    of points often. If the drawing is sparse, you may be better off with
+    straight GPI calls (I haven't really analyzed this yet).
+
+7)  If you doubt the effectiveness of this trick, try implementing it with
+    GpiSetPel(). You'll be reminded of the DOS BIOS!
+
+8)  The example is multithreaded; one thread does the model, one does the main
+    window handling. Down with clock icons!!!
+
+9)  Thanks to George Thiruvathakal for providing the array support package.
+    It makes possible the highly efficient shifting of planes required at
+    each epoch update (an operation not possible with straightforward
+    3-dimensional C array syntax).
+
+10) Permission to use as a guide for your own applications. Have fun!
+    Feedback to:
+
+	Donald Graft   dgraft@gate.net
+
+  The following files make up the example application:
+
+    build.cmd   -- command file to build the application. Assumes GCC/2 2.5.4.
+    fastgpi.def -- module definition file
+    fastgpi.c   -- main file
+    fastgpi.exe -- the executable
+    fastgpi.doc -- this file
+    a-float.h   -- header for array package
+    a-float.c   -- array package code

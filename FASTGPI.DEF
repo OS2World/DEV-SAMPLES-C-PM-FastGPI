@@ -1,0 +1,5 @@
+NAME            STDPRGM    WINDOWAPI
+
+DESCRIPTION    'Skeleton Program'
+HEAPSIZE        1024
+STACKSIZE       8192
