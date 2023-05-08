@@ -1,5 +1,8 @@
-NAME            STDPRGM    WINDOWAPI
+;-----------------------------------
+; BEZIER.DEF module definition file
+;-----------------------------------
 
-DESCRIPTION    'Skeleton Program'
-HEAPSIZE        1024
+NAME            FASTGPI    WINDOWAPI
+
+DESCRIPTION    '@#OS2World:1.01#@##1## 07 May 2023 20:00:00     ARCAOS-507::::::v1.01@@Getting Fast GPI Graphics Demo.'
 STACKSIZE       8192

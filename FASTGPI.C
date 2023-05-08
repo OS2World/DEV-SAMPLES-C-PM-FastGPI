@@ -1,5 +1,8 @@
-/* $Id: inten5pm.c 1.6 93/09/19 05:14:07 Unknown Exp Locker: Unknown $ */
-/* Copyright (c) 1994 Donald Graft, All Rights Reserved */
+/*
+ * fastgpi.c
+ *
+ * Donald Graft
+ */
 
 #define INCL_DOS
 #define INCL_WIN
@@ -9,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "a-float.h"
 /* ENDINCL */
 
@@ -30,16 +34,15 @@ PBITMAPINFO2 pbmi;
 BYTE RGBmap[32];
 BYTE Bitmap[NUM_MASSES_X*NUM_MASSES_Y];
 POINTL aptl[3] =
-  { 0u, 0u, NUM_MASSES_X, NUM_MASSES_Y, 0u, 0u };
+  { {0u, 0u}, {NUM_MASSES_X, NUM_MASSES_Y}, {0u, 0u} };
 
 MRESULT EXPENTRY window_func(HWND, ULONG, MPARAM, MPARAM);
 void Model(ULONG);
 void PrepareGraphics(BYTE *);
 void DisplayPlane(float **current);
 float ***Storage();
-  
-void
-main(void)
+
+int main(void)
 {
   HMQ hmq;
   QMSG qmsg;
@@ -139,7 +142,7 @@ window_func(HWND handle, ULONG mess, MPARAM parm1, MPARAM parm2)
       /* Create a semaphore to control access to the memory image
          presentation space. Only one thread can perform Gpi operations
          on it at a time. */
-      DosCreateMutexSem("\\sem32\\Lock", &hmtxLock, 0, FALSE);
+      DosCreateMutexSem((PCSZ)"\\sem32\\Lock", &hmtxLock, 0, FALSE);
 
       /* Create a thread to run the system model. */
       DosCreateThread(&tidModel, Model, 0UL, 0UL, 4096);
@@ -230,7 +233,7 @@ Model(ULONG dummy)
 
     /* Display results. */
     DisplayPlane(current);
-    
+
     /* Advance epoch. */
     count++;
     tmp = inhibitory;
